@@ -6,10 +6,10 @@ import './Board.css';
 import ReactDOM from 'react-dom'
 
 export default class Board extends React.Component {
-  componentDidMount() {
-    var container = ReactDOM.findDOMNode(this).getElementsByClassName("col-md-4");
-    Dragula([container]);
-  }
+  // componentDidMount() {
+  //   var container = ReactDOM.findDOMNode(this).getElementsByClassName("col-md-4");
+  //   Dragula([container]);
+  // }
 
   constructor(props) {
     super(props);
