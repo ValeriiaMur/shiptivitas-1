@@ -1,10 +1,16 @@
 import React from 'react';
-import Dragula from 'dragula';
+import Dragula from 'react-dragula';
 import 'dragula/dist/dragula.css';
 import Swimlane from './Swimlane';
 import './Board.css';
+import ReactDOM from 'react-dom'
 
 export default class Board extends React.Component {
+  componentDidMount() {
+    var container = ReactDOM.findDOMNode(this).getElementsByClassName("col-md-4");
+    Dragula([container]);
+  }
+
   constructor(props) {
     super(props);
     const clients = this.getClients();
@@ -52,7 +58,7 @@ export default class Board extends React.Component {
   }
   renderSwimlane(name, clients, ref) {
     return (
-      <Swimlane name={name} clients={clients} dragulaRef={ref}/>
+      <Swimlane name={name} clients={clients} dragulaRef={this.dragulaDecorator}/>
     );
   }
 
@@ -75,4 +81,10 @@ export default class Board extends React.Component {
       </div>
     );
   }
+  dragulaDecorator = (componentBackingInstance) => {
+    if (componentBackingInstance) {
+      let options = { };
+      Dragula([componentBackingInstance], options);
+    }
+  };
 }
