@@ -1,0 +1,88 @@
+diff --git a/note.md b/note.md
+new file mode 100644
+index 0000000..ac8806f
+--- /dev/null
++++ b/note.md
+@@ -0,0 +1 @@
++Added drag and drop to cards
+\ No newline at end of file
+diff --git a/package-lock.json b/package-lock.json
+index 52f63da..5fdfb9c 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -14156,6 +14156,15 @@
+         "scheduler": "^0.12.0"
+       }
+     },
++    "react-dragula": {
++      "version": "1.1.17",
++      "resolved": "https://registry.npmjs.org/react-dragula/-/react-dragula-1.1.17.tgz",
++      "integrity": "sha1-s8s1KkcKcZNnupnWpUAcYPrU9v8=",
++      "requires": {
++        "atoa": "1.0.0",
++        "dragula": "3.7.2"
++      }
++    },
+     "react-error-overlay": {
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-5.1.2.tgz",
+diff --git a/package.json b/package.json
+index e517e12..22c8e0e 100644
+--- a/package.json
++++ b/package.json
+@@ -13,6 +13,7 @@
+     "popper.js": "^1.14.7",
+     "react": "^16.7.0",
+     "react-dom": "^16.7.0",
++    "react-dragula": "^1.1.17",
+     "react-scripts": "2.1.3"
+   },
+   "scripts": {
+diff --git a/src/Board.js b/src/Board.js
+index 1f00045..6402d60 100644
+--- a/src/Board.js
++++ b/src/Board.js
+@@ -1,10 +1,42 @@
+ import React from 'react';
+-import Dragula from 'dragula';
++import Dragula from 'react-dragula';
+ import 'dragula/dist/dragula.css';
+ import Swimlane from './Swimlane';
+ import './Board.css';
+ 
+ export default class Board extends React.Component {
++  componentDidMount() {
++    const { backlog, inProgress, complete } = this.swimlanes;
++    let containers = [
++      backlog.current,
++      inProgress.current,
++      complete.current
++    ];
++
++    const drag = Dragula({ containers })
++    drag.on("drop", (el, target) => {
++
++      let lane = target.previousSibling.innerHTML;
++      let swim = (lane === "Backlog") ?
++        this.changeCardAttributes(el, "grey", "backlog")
++        : (lane === "In Progress") ?
++          this.changeCardAttributes(el, "blue", "in-progress")
++          : (lane === "Complete") ?
++            this.changeCardAttributes(el, "green", "complete")
++            : "";
++      return swim
++    })
++  }
++
++  changeCardAttributes(el, color, status) {
++    el.className = `Card Card-${color}`;
++    el.dataset.status = status;
++  }
++
++  componentWillUnmount() {
++    this.drag.remove();
++  }
++
+   constructor(props) {
+     super(props);
+     const clients = this.getClients();
