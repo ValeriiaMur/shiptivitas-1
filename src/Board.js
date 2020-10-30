@@ -3,13 +3,39 @@ import Dragula from 'react-dragula';
 import 'dragula/dist/dragula.css';
 import Swimlane from './Swimlane';
 import './Board.css';
-import ReactDOM from 'react-dom'
 
 export default class Board extends React.Component {
-  // componentDidMount() {
-  //   var container = ReactDOM.findDOMNode(this).getElementsByClassName("col-md-4");
-  //   Dragula([container]);
-  // }
+  componentDidMount() {
+    const { backlog, inProgress, complete } = this.swimlanes;
+    let containers = [
+      backlog.current,
+      inProgress.current,
+      complete.current
+    ];
+
+    const drag = Dragula({ containers })
+    drag.on("drop", (el, target) => {
+
+      let lane = target.previousSibling.innerHTML;
+      let swim = (lane === "Backlog") ?
+        this.changeCardAttributes(el, "grey", "backlog")
+        : (lane === "In Progress") ?
+          this.changeCardAttributes(el, "blue", "in-progress")
+          : (lane === "Complete") ?
+            this.changeCardAttributes(el, "green", "complete")
+            : "";
+      return swim
+    })
+  }
+
+  changeCardAttributes(el, color, status) {
+    el.className = `Card Card-${color}`;
+    el.dataset.status = status;
+  }
+
+  componentWillUnmount() {
+    this.drag.remove();
+  }
 
   constructor(props) {
     super(props);
@@ -58,7 +84,7 @@ export default class Board extends React.Component {
   }
   renderSwimlane(name, clients, ref) {
     return (
-      <Swimlane name={name} clients={clients} dragulaRef={this.dragulaDecorator}/>
+      <Swimlane name={name} clients={clients} dragulaRef={ref}/>
     );
   }
 
@@ -81,10 +107,4 @@ export default class Board extends React.Component {
       </div>
     );
   }
-  dragulaDecorator = (componentBackingInstance) => {
-    if (componentBackingInstance) {
-      let options = { };
-      Dragula([componentBackingInstance], options);
-    }
-  };
 }

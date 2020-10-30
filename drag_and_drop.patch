@@ -1,0 +1,74 @@
+diff --git a/package-lock.json b/package-lock.json
+index 5fdfb9c..52f63da 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -14156,15 +14156,6 @@
+         "scheduler": "^0.12.0"
+       }
+     },
+-    "react-dragula": {
+-      "version": "1.1.17",
+-      "resolved": "https://registry.npmjs.org/react-dragula/-/react-dragula-1.1.17.tgz",
+-      "integrity": "sha1-s8s1KkcKcZNnupnWpUAcYPrU9v8=",
+-      "requires": {
+-        "atoa": "1.0.0",
+-        "dragula": "3.7.2"
+-      }
+-    },
+     "react-error-overlay": {
+       "version": "5.1.2",
+       "resolved": "https://registry.npmjs.org/react-error-overlay/-/react-error-overlay-5.1.2.tgz",
+diff --git a/package.json b/package.json
+index 22c8e0e..e517e12 100644
+--- a/package.json
++++ b/package.json
+@@ -13,7 +13,6 @@
+     "popper.js": "^1.14.7",
+     "react": "^16.7.0",
+     "react-dom": "^16.7.0",
+-    "react-dragula": "^1.1.17",
+     "react-scripts": "2.1.3"
+   },
+   "scripts": {
+diff --git a/src/Board.js b/src/Board.js
+index 0f572d3..1f00045 100644
+--- a/src/Board.js
++++ b/src/Board.js
+@@ -1,16 +1,10 @@
+ import React from 'react';
+-import Dragula from 'react-dragula';
++import Dragula from 'dragula';
+ import 'dragula/dist/dragula.css';
+ import Swimlane from './Swimlane';
+ import './Board.css';
+-import ReactDOM from 'react-dom'
+ 
+ export default class Board extends React.Component {
+-  // componentDidMount() {
+-  //   var container = ReactDOM.findDOMNode(this).getElementsByClassName("col-md-4");
+-  //   Dragula([container]);
+-  // }
+-
+   constructor(props) {
+     super(props);
+     const clients = this.getClients();
+@@ -58,7 +52,7 @@ export default class Board extends React.Component {
+   }
+   renderSwimlane(name, clients, ref) {
+     return (
+-      <Swimlane name={name} clients={clients} dragulaRef={this.dragulaDecorator}/>
++      <Swimlane name={name} clients={clients} dragulaRef={ref}/>
+     );
+   }
+ 
+@@ -81,10 +75,4 @@ export default class Board extends React.Component {
+       </div>
+     );
+   }
+-  dragulaDecorator = (componentBackingInstance) => {
+-    if (componentBackingInstance) {
+-      let options = { };
+-      Dragula([componentBackingInstance], options);
+-    }
+-  };
+ }
